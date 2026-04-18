@@ -1,5 +1,7 @@
 import { createRequire } from "module";
 
+import { configurePdfjsWorker } from "@/lib/pdfjs-config";
+
 /**
  * pdfjs-dist loads display/canvas at import time (`new DOMMatrix()`). In Node it
  * normally pulls DOMMatrix from @napi-rs/canvas; priming from here ensures the
@@ -103,7 +105,9 @@ function rebuildLineText(line: PositionedText[]): string {
  */
 export async function extractTextFromPDF(buffer: Buffer): Promise<string> {
   primePdfjsNodeGlobals();
+  // Legacy build: main entry is pdf.mjs (package has no extension-less `pdf` file).
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  configurePdfjsWorker(pdfjs);
   const loadingTask = pdfjs.getDocument({
     data: new Uint8Array(buffer),
     useSystemFonts: true,
