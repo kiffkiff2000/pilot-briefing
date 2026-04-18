@@ -1,0 +1,11 @@
+-- Reference schema for `public.runways` (Supabase / PostgREST).
+--
+-- App query (see lib/runways-supabase.ts):
+--   .select("runwayID, heading").eq("icao", icao)
+-- `id` is not selected; only runway geometry is needed for wind / Est. RWY.
+--
+-- Columns:
+--   id        text    PRIMARY KEY  -- stable row id (e.g. composite or UUID string)
+--   icao      text
+--   runwayID  text                 -- e.g. "24L", "09"
+--   heading   int8                 -- magnetic heading, degrees
