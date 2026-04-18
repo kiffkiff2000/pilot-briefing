@@ -14,6 +14,7 @@ import { metarAgeFreshnessClass, metarAgeFreshnessHex } from "@/lib/metar-age-st
 import { metarObservationAgeMinutes } from "@/lib/taf-timeline";
 import type { RunwayRow } from "@/lib/runways-wind";
 import { FlightRouteMap } from "@/components/flight-route-map";
+import { LoadFlightPackageBar } from "@/components/load-flight-package-bar";
 import { mapPinCoordsForAirport } from "@/lib/airport-coordinates";
 
 type NotamFlightAlert = {
@@ -155,15 +156,10 @@ export default function BriefingPage() {
   const [data, setData] = useState<BriefingResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
 
-  const runBriefing = async () => {
+  const runBriefing = async (file: File) => {
     setError(null);
     setData(null);
-    if (!file) {
-      setError("Select a PDF flight package first.");
-      return;
-    }
     setLoading(true);
     try {
       const pdfBase64 = await fileToBase64(file);
@@ -313,14 +309,7 @@ export default function BriefingPage() {
             <div className="flightId">{summary?.registration || summary?.aircraft || "FLIGHT"}</div>
           </div>
           <div className="topbarLoad">
-            <div className="topbarLoadHead">Load Flight Package</div>
-            <div className="topbarLoadRow">
-              <input type="file" accept="application/pdf" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
-              <button className="btn" onClick={runBriefing} disabled={loading || !file}>
-                {loading ? "Processing..." : "Generate Briefing"}
-              </button>
-            </div>
-            {error ? <div className="topbarLoadErr">{error}</div> : null}
+            <LoadFlightPackageBar loading={loading} error={error} onGenerate={runBriefing} />
           </div>
           <div className="route">
             <span className="routeIcao">{summary?.departure || "----"}</span>
