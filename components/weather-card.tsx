@@ -89,14 +89,20 @@ export function WindArrow({
 }) {
   if (direction == null) return null;
   const metarFrom = ((direction % 360) + 360) % 360;
+  /** Direction wind blows toward (compass °, clockwise from north). */
   const toDirection = (metarFrom + 180) % 360;
+  /**
+   * SVG arrow is drawn pointing right (east = 90° on a north-up compass). CSS rotate() is
+   * clockwise; subtract 90° so rotation matches compass bearing of the “to” direction.
+   */
+  const cssRotation = ((toDirection - 90) % 360 + 360) % 360;
   const windText =
     gustKt != null
       ? `${String(metarFrom).padStart(3, "0")}/${speedKt}G${gustKt}KT`
       : `${String(metarFrom).padStart(3, "0")}/${speedKt}KT`;
   return (
     <div className={`flex items-center justify-center gap-2 font-mono text-[10px] font-semibold ${colorClass}`}>
-      <div className="relative h-3 w-6" aria-hidden style={{ transform: `rotate(${toDirection}deg)` }}>
+      <div className="relative h-3 w-6" aria-hidden style={{ transform: `rotate(${cssRotation}deg)` }}>
         <div className="absolute left-0 top-1/2 h-[1.5px] w-6 -translate-y-1/2 bg-current" />
         <div className="absolute right-0 top-1/2 h-0 w-0 -translate-y-1/2 border-b-[4px] border-l-[6px] border-t-[4px] border-b-transparent border-l-current border-t-transparent" />
       </div>
